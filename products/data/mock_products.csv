@@ -1,0 +1,11 @@
+sku,name,price,inventory_quantity,description
+SKU001,Premium T-Shirt,19.99,100,High-quality cotton t-shirt
+SKU002,Designer Jeans,49.99,50,Stylish jeans for all occasions
+SKU003,Running Shoes,89.99,25,Comfortable shoes for runners
+SKU004,Smartphone Case,15.99,200,Durable case for your smartphone
+SKU005,Wireless Earbuds,79.99,30,High-quality wireless earbuds
+SKU006,Laptop Backpack,39.99,45,Spacious backpack for your laptop
+SKU007,Fitness Tracker,59.99,15,Track your fitness activities
+SKU008,Water Bottle,9.99,120,Stay hydrated all day
+SKU009,Desk Lamp,24.99,40,LED desk lamp for your workspace
+SKU010,Portable Charger,29.99,60,Charge your devices on the go 

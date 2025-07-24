@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DEBUG=True
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/shopify_integration
+      - REDIS_URL=redis://redis:6379/0
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=shopify_integration
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: .
+    command: celery -A shopify_integration worker -l INFO
+    volumes:
+      - .:/app
+    depends_on:
+      - web
+      - redis
+      - db
+    environment:
+      - DEBUG=True
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/shopify_integration
+      - REDIS_URL=redis://redis:6379/0
+
+  celery-beat:
+    build: .
+    command: celery -A shopify_integration beat -l INFO
+    volumes:
+      - .:/app
+    depends_on:
+      - web
+      - redis
+      - db
+      - celery
+    environment:
+      - DEBUG=True
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/shopify_integration
+      - REDIS_URL=redis://redis:6379/0
+
+volumes:
+  postgres_data: 

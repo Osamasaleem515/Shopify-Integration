@@ -1,0 +1,34 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:products_product_changelist' %}">Products</a>
+    &rsaquo; Bulk Price Update
+</div>
+{% endblock %}
+
+{% block content %}
+    <div class="module">
+        <h2>Bulk Price Update for {{ selected_count }} Products</h2>
+        <form action="" method="post">
+            {% csrf_token %}
+            <fieldset class="module aligned">
+                <div class="form-row">
+                    <label for="id_action" class="required">Action:</label>
+                    {{ form.action }}
+                </div>
+                <div class="form-row">
+                    <label for="id_value" class="required">Value:</label>
+                    {{ form.value }}
+                </div>
+            </fieldset>
+            <div class="submit-row">
+                <input type="submit" value="Apply" class="default" name="_apply" />
+                <a href="{% url 'admin:products_product_changelist' %}" class="button cancel-link">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %} 
