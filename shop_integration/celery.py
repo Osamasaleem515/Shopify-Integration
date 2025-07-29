@@ -23,6 +23,22 @@ try:
             'schedule': crontab(hour=2, minute=0),  # Run at 2:00 AM every day
             'args': (),
         },
+        # Example schedules you can uncomment:
+        # 'hourly-inventory-check': {
+        #     'task': 'products.tasks.nightly_inventory_update',
+        #     'schedule': crontab(minute=0),  # Every hour
+        #     'args': (),
+        # },
+        # 'weekly-inventory-report': {
+        #     'task': 'products.tasks.nightly_inventory_update',
+        #     'schedule': crontab(day_of_week=1, hour=9, minute=0),  # Monday 9:00 AM
+        #     'args': (),
+        # },
+        # 'every-5-minutes': {
+        #     'task': 'products.tasks.nightly_inventory_update',
+        #     'schedule': 300.0,  # Every 5 minutes (300 seconds)
+        #     'args': (),
+        # },
     }
 
     @app.task(bind=True, ignore_result=True)

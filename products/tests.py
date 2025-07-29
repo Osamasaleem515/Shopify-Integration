@@ -11,6 +11,15 @@ class ProductAPITestCase(APITestCase):
     def setUp(self):
         # Create test user and authenticate
         self.user = User.objects.create_user(username='testuser', password='testpassword')
+        
+        # Create Product Managers group and add user to it
+        self.product_managers_group, created = Group.objects.get_or_create(name='Product Managers')
+        self.user.groups.add(self.product_managers_group)
+        
+        # Give user staff permissions for admin access
+        self.user.is_staff = True
+        self.user.save()
+        
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
         
@@ -116,17 +125,21 @@ class ProductAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 2)
         
-        # Test filtering by low stock
+        # Test filtering by low stock (products with quantity <= 10)
         url = reverse('product-list') + '?low_stock=true'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['sku'], 'TP2')
+        self.assertEqual(len(response.data['results']), 2)  # TP2 (qty=5) and DI1 (qty=0)
+        # Check that both low stock products are returned
+        skus = [item['sku'] for item in response.data['results']]
+        self.assertIn('TP2', skus)
+        self.assertIn('DI1', skus)
     
     def test_update_inventory(self):
         """
         Test updating inventory via the update_inventory endpoint.
         """
+        # For DRF ViewSet actions, the URL name is {basename}-{action_name}
         url = reverse('product-update-inventory', kwargs={'pk': self.product1.pk})
         data = {
             'quantity': 75,
@@ -161,8 +174,8 @@ class ProductAPITestCase(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['total_products'], 3)
-        self.assertEqual(response.data['low_stock_count'], 1)
-        self.assertEqual(response.data['out_of_stock_count'], 1)
+        self.assertEqual(response.data['low_stock_count'], 2)  # TP2 (qty=5) and DI1 (qty=0)
+        self.assertEqual(response.data['out_of_stock_count'], 1)  # DI1 (qty=0)
 
 
 class ShopifyWebhookTestCase(APITestCase):
