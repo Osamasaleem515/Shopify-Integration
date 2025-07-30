@@ -8,9 +8,9 @@ celery==5.3.4
 django-celery-results==2.5.1
 django-celery-beat==2.5.0
 
-# AI/NLP Libraries
-spacy==3.7.2
-sentence-transformers==2.2.2
+# AI/NLP Libraries (commented out because they are too large)
+# spacy==3.7.2
+# sentence-transformers==2.2.2
 
 # Database and Caching
 redis==5.0.1

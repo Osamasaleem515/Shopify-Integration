@@ -13,6 +13,7 @@ services:
       - redis
     environment:
       - DEBUG=True
+      - DOCKER_ENV=True
       - DATABASE_URL=postgres://postgres:postgres@db:5432/shopify_integration
       - REDIS_URL=redis://redis:6379/0
 
@@ -32,7 +33,7 @@ services:
 
   celery:
     build: .
-    command: celery -A shopify_integration worker -l INFO
+    command: celery -A shop_integration worker -l INFO
     volumes:
       - .:/app
     depends_on:
@@ -41,12 +42,15 @@ services:
       - db
     environment:
       - DEBUG=True
+      - DOCKER_ENV=True
       - DATABASE_URL=postgres://postgres:postgres@db:5432/shopify_integration
       - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
   celery-beat:
     build: .
-    command: celery -A shopify_integration beat -l INFO
+    command: celery -A shop_integration beat -l INFO
     volumes:
       - .:/app
     depends_on:
@@ -56,8 +60,11 @@ services:
       - celery
     environment:
       - DEBUG=True
+      - DOCKER_ENV=True
       - DATABASE_URL=postgres://postgres:postgres@db:5432/shopify_integration
       - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
 volumes:
   postgres_data: 
