@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install spaCy model
-RUN python -m spacy download en_core_web_md
+# Install spaCy model (commented out because it is too large)
+# RUN python -m spacy download en_core_web_md
 
 # Copy project
 COPY . .

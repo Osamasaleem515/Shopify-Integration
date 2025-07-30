@@ -189,8 +189,15 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Import local settings if they exist
-try:
-    from .local_settings import *
-except ImportError:
-    pass
+# Import Docker settings if in Docker environment, otherwise local settings
+import os
+if os.environ.get('DOCKER_ENV', 'False') == 'True':
+    try:
+        from .docker_settings import *
+    except ImportError:
+        pass
+else:
+    try:
+        from .local_settings import *
+    except ImportError:
+        pass
