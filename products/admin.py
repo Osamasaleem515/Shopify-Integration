@@ -98,8 +98,9 @@ class ProductAdmin(admin.ModelAdmin):
         Custom action for bulk price updates.
         This action redirects to a custom form page.
         """
-        selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
-        request.session['selected_products'] = [str(pk) for pk in queryset.values_list('pk', flat=True)]
+        # Get selected object IDs from the queryset
+        selected_ids = [str(pk) for pk in queryset.values_list('pk', flat=True)]
+        request.session['selected_products'] = selected_ids
         return redirect('admin:bulk-price-update')
     
     bulk_price_update.short_description = "Update prices in bulk"
@@ -149,10 +150,13 @@ class ProductAdmin(admin.ModelAdmin):
                 
         else:
             form = BulkPriceUpdateForm()
-            # Store selected items in session
-            selected = request.GET.getlist('ids')
-            if selected:
-                request.session['selected_products'] = selected
+            # Check if we have selected products in session
+            selected_products = request.session.get('selected_products', [])
+            
+            # If no products selected, show error
+            if not selected_products:
+                messages.error(request, "No products selected. Please select products first.")
+                return redirect('admin:products_product_changelist')
         
         context = {
             'form': form,

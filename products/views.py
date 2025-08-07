@@ -57,6 +57,12 @@ class ProductViewSet(viewsets.ModelViewSet):
             return ProductDetailSerializer
         return ProductSerializer
     
+    def get_object(self):
+        try:
+            return super().get_object()
+        except:
+            return None
+    
     @action(detail=True, methods=['post'])
     def update_inventory(self, request, pk=None):
         """
@@ -64,7 +70,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         product = self.get_object()
         new_quantity = request.data.get('quantity')
-        
+
+        if new_quantity is None:
+            return Response(
+                {'error': 'Quantity is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
             new_quantity = int(new_quantity)
             if new_quantity < 0:
